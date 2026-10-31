@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>World News</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef1f4; --card:#ffffff; --ink:#0f1c2e; --muted:#5b687a; --line:#d5dbe3;
+  --accent:#0b5fff; --accent-ink:#ffffff;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0c131d; --card:#131d2b; --ink:#e8eef6; --muted:#93a1b5; --line:#24324a;
+    --accent:#5b9bff; --accent-ink:#06121f; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0c131d; --card:#131d2b; --ink:#e8eef6; --muted:#93a1b5; --line:#24324a;
+  --accent:#5b9bff; --accent-ink:#06121f; color-scheme: dark;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Instrument Sans",system-ui,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+header{max-width:1040px;margin:0 auto;padding:28px 20px 12px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+h1{font:700 clamp(2rem,6vw,3.2rem)/1 "Newsreader",Georgia,serif;margin:0;letter-spacing:-.02em}
+.sub{color:var(--muted);margin:6px 0 0;font-size:.95rem}
+.tools{display:flex;gap:8px;align-items:center}
+input[type=search]{font:inherit;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);width:200px;max-width:50vw}
+button{font:inherit;cursor:pointer}
+.icon{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.tabs{max-width:1040px;margin:0 auto;padding:10px 20px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{white-space:nowrap;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);font-weight:500}
+.tab[aria-selected=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.tab:focus-visible,.icon:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+main{max-width:1040px;margin:0 auto;padding:20px}
+.status{color:var(--muted);font-size:.9rem;margin-bottom:14px}
+.lead{display:grid;grid-template-columns:1.2fr 1fr;gap:0;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:20px}
+.lead .img{background:var(--line) center/cover no-repeat;min-height:240px}
+.lead .body{padding:22px}
+.lead h2{font:700 clamp(1.5rem,3.5vw,2.1rem)/1.15 "Newsreader",Georgia,serif;margin:0 0 10px}
+.lead h2 a{color:inherit;text-decoration:none}
+.lead h2 a:hover{text-decoration:underline}
+.meta{color:var(--muted);font-size:.85rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+.item .img{aspect-ratio:16/9;background:var(--line) center/cover no-repeat}
+.item .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.item h3{font:700 1.15rem/1.25 "Newsreader",Georgia,serif;margin:0}
+.item h3 a{color:inherit;text-decoration:none}
+.item h3 a:hover{text-decoration:underline}
+.item p{margin:0;color:var(--muted);font-size:.92rem}
+.src{font-weight:600;color:var(--accent)}
+.msg{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+.msg button{margin-top:10px;padding:8px 14px;border-radius:10px;border:0;background:var(--accent);color:var(--accent-ink);font-weight:600}
+.skel{height:230px;border-radius:10px;background:linear-gradient(90deg,var(--card),var(--line),var(--card));background-size:200% 100%;animation:sh 1.4s linear infinite}
+@keyframes sh{to{background-position:-200% 0}}
+footer{max-width:1040px;margin:0 auto;padding:10px 20px 40px;color:var(--muted);font-size:.85rem}
+@media (max-width:720px){.lead{grid-template-columns:1fr}.lead .img{min-height:180px}}
+@media (prefers-reduced-motion:reduce){.skel{animation:none}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>World News</h1>
+    <p class="sub">Live headlines from every region, in one place.</p>
+  </div>
+  <div class="tools">
+    <input id="q" type="search" placeholder="Search headlines" aria-label="Search headlines">
+    <button class="icon" id="refresh" aria-label="Refresh news">Refresh</button>
+    <button class="icon" id="theme" aria-label="Switch light or dark theme">Theme</button>
+  </div>
+</header>
+<nav><div class="tabs" id="tabs" role="tablist" aria-label="Regions"></div></nav>
+<main>
+  <div class="status" id="status" aria-live="polite"></div>
+  <div id="out"></div>
+</main>
+<footer>Headlines and links come from BBC News, Al Jazeera and ABC Australia feeds. Tap a story to read it at the source.</footer>
+
+<script>
+const REGIONS = [
+  {id:'world', name:'Top world', src:'BBC News', url:'https://feeds.bbci.co.uk/news/world/rss.xml'},
+  {id:'us', name:'US & Canada', src:'BBC News', url:'https://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml'},
+  {id:'latam', name:'Latin America', src:'BBC News', url:'https://feeds.bbci.co.uk/news/world/latin_america/rss.xml'},
+  {id:'europe', name:'Europe', src:'BBC News', url:'https://feeds.bbci.co.uk/news/world/europe/rss.xml'},
+  {id:'africa', name:'Africa', src:'BBC News', url:'https://feeds.bbci.co.uk/news/world/africa/rss.xml'},
+  {id:'me', name:'Middle East', src:'BBC News', url:'https://feeds.bbci.co.uk/news/world/middle_east/rss.xml'},
+  {id:'asia', name:'Asia', src:'BBC News', url:'https://feeds.bbci.co.uk/news/world/asia/rss.xml'},
+  {id:'oceania', name:'Australia', src:'ABC Australia', url:'https://www.abc.net.au/news/feed/51120/rss.xml'},
+  {id:'aj', name:'Al Jazeera', src:'Al Jazeera', url:'https://www.aljazeera.com/xml/rss/all.xml'}
+];
+const cache = {};
+let current = 'world';
+const $ = s => document.querySelector(s);
+const out = $('#out'), statusEl = $('#status'), tabs = $('#tabs');
+
+REGIONS.forEach(r => {
+  const b = document.createElement('button');
+  b.className = 'tab'; b.textContent = r.name; b.role = 'tab'; b.id = 'tab-' + r.id;
+  b.addEventListener('click', () => { current = r.id; load(); });
+  tabs.appendChild(b);
+});
+
+function esc(s){ const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+function plain(html){ const d = document.createElement('div'); d.innerHTML = html || ''; return (d.textContent || '').trim(); }
+function ago(d){
+  const t = new Date(String(d).replace(' ', 'T') + (String(d).includes('T') || /Z|[+-]\d\d:?\d\d$/.test(d) ? '' : 'Z'));
+  if (isNaN(t)) return '';
+  const m = Math.round((Date.now() - t) / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return m + ' min ago';
+  if (m < 1440) return Math.round(m / 60) + ' h ago';
+  return Math.round(m / 1440) + ' d ago';
+}
+function imgOf(it){
+  return it.thumbnail || (it.enclosure && it.enclosure.link && /image|jpe?g|png|webp/i.test((it.enclosure.type || '') + it.enclosure.link) ? it.enclosure.link : '');
+}
+function setTabs(){
+  REGIONS.forEach(r => $('#tab-' + r.id).setAttribute('aria-selected', r.id === current));
+}
+function skeleton(){
+  out.innerHTML = '<div class="grid">' + '<div class="skel"></div>'.repeat(6) + '</div>';
+}
+async function fetchRegion(r){
+  const api = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(r.url);
+  const res = await fetch(api);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const j = await res.json();
+  if (j.status !== 'ok') throw new Error(j.message || 'Feed error');
+  return { items: j.items, at: Date.now() };
+}
+async function load(force){
+  setTabs();
+  const r = REGIONS.find(x => x.id === current);
+  if (!force && cache[r.id] && Date.now() - cache[r.id].at < 300000){ render(); return; }
+  skeleton(); statusEl.textContent = 'Loading ' + r.name + '…';
+  try {
+    cache[r.id] = await fetchRegion(r);
+    render();
+  } catch (e) {
+    statusEl.textContent = '';
+    out.innerHTML = '<div class="msg"><strong>Couldn’t load ' + esc(r.name) + '.</strong><br>Check your internet connection. If you opened this file inside a preview, download it and open it in Chrome instead.<br><button id="retry">Try again</button></div>';
+    $('#retry').addEventListener('click', () => load(true));
+  }
+}
+function render(){
+  const r = REGIONS.find(x => x.id === current);
+  const data = cache[r.id];
+  const term = $('#q').value.trim().toLowerCase();
+  let items = data.items.filter(i => !term || (i.title + ' ' + plain(i.description)).toLowerCase().includes(term));
+  statusEl.textContent = items.length + ' stories · updated ' + new Date(data.at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  if (!items.length){ out.innerHTML = '<div class="msg">No headlines match “' + esc(term) + '”. Clear the search to see all stories.</div>'; return; }
+  let html = '';
+  let rest = items;
+  if (!term){
+    const L = items[0]; rest = items.slice(1);
+    const img = imgOf(L);
+    html += '<article class="lead">' + (img ? '<div class="img" style="background-image:url(\'' + esc(img) + '\')"></div>' : '<div class="img"></div>') +
+      '<div class="body"><div class="meta"><span class="src">' + esc(r.src) + '</span> · ' + esc(ago(L.pubDate)) + '</div>' +
+      '<h2><a href="' + esc(L.link) + '" target="_blank" rel="noopener">' + esc(L.title) + '</a></h2>' +
+      '<p>' + esc(plain(L.description).slice(0, 260)) + '</p></div></article>';
+  }
+  html += '<div class="grid">' + rest.map(i => {
+    const img = imgOf(i);
+    return '<article class="item">' + (img ? '<div class="img" style="background-image:url(\'' + esc(img) + '\')"></div>' : '') +
+      '<div class="body"><div class="meta"><span class="src">' + esc(r.src) + '</span> · ' + esc(ago(i.pubDate)) + '</div>' +
+      '<h3><a href="' + esc(i.link) + '" target="_blank" rel="noopener">' + esc(i.title) + '</a></h3>' +
+      '<p>' + esc(plain(i.description).slice(0, 150)) + '</p></div></article>';
+  }).join('') + '</div>';
+  out.innerHTML = html;
+}
+$('#q').addEventListener('input', () => { if (cache[current]) render(); });
+$('#refresh').addEventListener('click', () => load(true));
+$('#theme').addEventListener('click', () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme = dark ? 'light' : 'dark';
+});
+setInterval(() => load(true), 300000);
+load();
+</script>
+</body>
+</html>
